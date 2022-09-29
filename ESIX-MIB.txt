@@ -39,9 +39,9 @@ eSIXPortTable						OBJECT IDENTIFIER	::=  {  eSIX    2   }
 
 
 -- eSIX-MIB::eSIXTunnelTable
-eSIXTunnels		OBJECT IDENTIFIER   
+eSIXTunnels		OBJECT IDENTIFIER
 		::=  {  eSIX    3   }
-    eSIXipsec		OBJECT IDENTIFIER	
+    eSIXipsec		OBJECT IDENTIFIER
 			::=  {  eSIXTunnels    1  }
 
 IkeAuthMethod ::= TEXTUAL-CONVENTION
@@ -58,7 +58,7 @@ IkeAuthMethod ::= TEXTUAL-CONVENTION
                     }
 
 eSIXikeTunnelTable OBJECT-TYPE
-    SYNTAX          SEQUENCE OF eSIXikeTunnelEntry 
+    SYNTAX          SEQUENCE OF eSIXikeTunnelEntry
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
@@ -74,7 +74,7 @@ eSIXikeTunnelEntry OBJECT-TYPE
     DESCRIPTION
         "Each entry contains the attributes associated with
         an active IPsec Phase-1 IKE Tunnel."
-    INDEX           { eSIXikeTunIndex } 
+    INDEX           { eSIXikeTunIndex }
     ::= { eSIXikeTunnelTable 1 }
 
 eSIXIKETunnelEntry::=
@@ -264,7 +264,7 @@ eSIXikeTunInPkts	OBJECT-TYPE
 	DESCRIPTION
 		"The number of packets received by the IPsec Phase-1 IKE Tunnel."
 	::= { eSIXikeTunnelEntry 19 }
-	
+
 
 eSIXikeTunStatus OBJECT-TYPE
 	SYNTAX          DisplayString
@@ -282,7 +282,7 @@ eSIXipSecTunnelEntry OBJECT-TYPE
     DESCRIPTION
         "Each entry contains the attributes
         associated with an active IPsec Phase-2 Tunnel."
-    INDEX           { eSIXipSecTunIndex } 
+    INDEX           { eSIXipSecTunIndex }
     ::= { eSIXipSecTunnelTable 2 }
 
 EncapMode ::= TEXTUAL-CONVENTION
@@ -313,39 +313,13 @@ eSIXipSecTunnelEntry ::= SEQUENCE {
         eSIXipSecTunRemoteAddr          IpAddress,
         eSIXipSecTunKeyType             KeyType,
         eSIXipSecTunEncapMode           EncapMode,
-    -- eSIXipSecTunLifeSize            Integer32,
         eSIXipSecTunLifeTime            Integer32,
         eSIXipSecTunActiveTime          TimeInterval,
-      --  eSIXipSecTunSaLifeSizeThreshold Integer32,
-    --  eSIXipSecTunSaLifeTimeThreshold Integer32,
         eSIXipSecTunTotalRefreshes      Counter32,
-      --  eSIXipSecTunExpiredSaInstances  Counter32,
-     --   eSIXipSecTunCurrentSaInstances  Gauge32,
         eSIXipSecTunInOctets            Counter32,
-      --  eSIXipSecTunHcInOctets          Counter64,
-     --   eSIXipSecTunInOctWraps          Counter32,
-     --   eSIXipSecTunInDecompOctets      Counter32,
-     --   eSIXipSecTunHcInDecompOctets    Counter64,
-     --   eSIXipSecTunInDecompOctWraps    Counter32,
         eSIXipSecTunInPkts              Counter32,
-     --   eSIXipSecTunInDropPkts          Counter32,
-    --    eSIXipSecTunInReplayDropPkts    Counter32,
-     --   eSIXipSecTunInAuths             Counter32,
-    --    eSIXipSecTunInAuthFails         Counter32,
-    --    eSIXipSecTunInDecrypts          Counter32,
-     --   eSIXipSecTunInDecryptFails      Counter32,
         eSIXipSecTunOutOctets           Counter32,
-   --     eSIXipSecTunHcOutOctets         Counter64,
-    --    eSIXipSecTunOutOctWraps         Counter32,
-     --   eSIXipSecTunOutUncompOctets     Counter32,
-     --   eSIXipSecTunHcOutUncompOctets   Counter64,
-     --   eSIXipSecTunOutUncompOctWraps   Counter32,
         eSIXipSecTunOutPkts             Counter32,
-     -- eSIXipSecTunOutDropPkts         Counter32,
-      --   eSIXipSecTunOutAuths            Counter32,
-      --  eSIXipSecTunOutAuthFails        Counter32,
-      --  eSIXipSecTunOutEncrypts         Counter32,
-      --  eSIXipSecTunOutEncryptFails     Counter32,
         eSIXipSecTunStatus              DisplayString
 }
 
