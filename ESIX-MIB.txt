@@ -1,0 +1,480 @@
+ESIX-MIB DEFINITIONS ::= BEGIN
+
+
+        IMPORTS
+            MODULE-IDENTITY, OBJECT-TYPE, Counter32, Gauge32, Counter64,
+            Integer32, TimeTicks, mib-2,
+            NOTIFICATION-TYPE                        FROM SNMPv2-SMI
+            TEXTUAL-CONVENTION, DisplayString,
+            PhysAddress, TruthValue, RowStatus,
+            TimeStamp, AutonomousType, TestAndIncr   FROM SNMPv2-TC
+            MODULE-COMPLIANCE, OBJECT-GROUP,
+            NOTIFICATION-GROUP                       FROM SNMPv2-CONF
+            snmpTraps                                FROM SNMPv2-MIB
+            IANAifType                               FROM IANAifType-MIB;
+
+
+org	                    OBJECT IDENTIFIER   ::=  {  iso  3  }
+
+dod                     OBJECT IDENTIFIER   ::=  {  org  6  }
+
+internet	            OBJECT IDENTIFIER   ::=  {  dod  1  }
+
+private	                OBJECT IDENTIFIER   ::=  {  internet  4  }
+
+enterprises	            OBJECT IDENTIFIER   ::=  {  private  1  }
+
+eSIX	MODULE-IDENTITY
+		LAST-UPDATED	"202209261000Z"
+		ORGANIZATION	"eSIX"
+		CONTACT-INFO	"info@esix.co"
+		DESCRIPTION		"MIB for esix network Xatellite serials"
+		REVISION		"202209261000Z"
+		::=  {  enterprises  59425  }  -- assigned by IANA
+
+
+eSIXProductTable					OBJECT IDENTIFIER   ::=  {  eSIX    1   }
+
+eSIXPortTable						OBJECT IDENTIFIER	::=  {  eSIX    2   }
+
+
+-- eSIX-MIB::eSIXTunnelTable
+eSIXTunnels		OBJECT IDENTIFIER   
+		::=  {  eSIX    3   }
+    eSIXipsec		OBJECT IDENTIFIER	
+			::=  {  eSIXTunnels    1  }
+
+IkeAuthMethod ::= TEXTUAL-CONVENTION
+    STATUS          current
+    DESCRIPTION
+        "The authentication method used in IPsec Phase-1 IKE
+        negotiations."
+    SYNTAX          INTEGER  {
+                        none(1),
+                        preSharedKey(2),
+                        rsaSig(3),
+                        rsaEncrypt(4),
+                        revPublicKey(5)
+                    }
+
+eSIXikeTunnelTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF eSIXikeTunnelEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "The IPsec Phase-1 Internet Key Exchange Tunnel Table.
+        There is one entry in this table for each active IPsec
+        Phase-1 IKE Tunnel."
+    ::= { eSIXipsec 1 }
+
+eSIXikeTunnelEntry OBJECT-TYPE
+    SYNTAX          eSIXikeTunnelEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry contains the attributes associated with
+        an active IPsec Phase-1 IKE Tunnel."
+    INDEX           { eSIXikeTunIndex } 
+    ::= { eSIXikeTunnelTable 1 }
+
+eSIXIKETunnelEntry::=
+SEQUENCE {
+	 	eSIXikeTunIndex              Integer32,
+        eSIXikeTunLocalValue         DisplayString,
+        eSIXikeTunLocalAddr          IpAddress,
+        eSIXikeTunLocalName          DisplayString,
+        eSIXikeTunRemoteValue        DisplayString,
+        eSIXikeTunRemoteAddr         IpAddress,
+        eSIXikeTunRemoteName         DisplayString,
+        eSIXikeTunEncryptAlgo        DisplayString,
+        eSIXikeTunHashAlgo           DisplayString,
+        eSIXikeTunAuthMethod         IkeAuthMethod,
+        eSIXikeTunLifeTime           Integer32,
+        eSIXikeTunActiveTime         TimeInterval,
+     -- eSIXikeTunSaRefreshThreshold Integer32,
+     -- eSIXikeTunTotalRefreshes     Counter32,
+        eSIXikeTunInOctets           Counter32,
+        eSIXikeTunInPkts             Counter32,
+     --   eSIXikeTunInDropPkts         Counter32,
+    --  eSIXikeTunInNotifys          Counter32,
+    --  eSIXikeTunInP2Exchgs         Counter32,
+    --  eSIXikeTunInP2ExchgInvalids  Counter32,
+    --  eSIXikeTunInP2ExchgRejects   Counter32,
+    --  eSIXikeTunInP2SaDelRequests  Counter32,
+        eSIXikeTunOutOctets          Counter32,
+        eSIXikeTunOutPkts            Counter32,
+    --	eSIXikeTunOutDropPkts        Counter32,
+    --  eSIXikeTunOutNotifys         Counter32,
+    --  eSIXikeTunOutP2Exchgs        Counter32,
+    --  eSIXikeTunOutP2ExchgInvalids Counter32,
+    --  eSIXikeTunOutP2ExchgRejects  Counter32,
+    --  eSIXikeTunOutP2SaDelRequests Counter32,
+        eSIXikeTunStatus             DisplayString
+}
+
+eSIXikeTunIndex OBJECT-TYPE
+	SYNTAX          Integer32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"A unique value for each IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 1 }
+
+eSIXikeTunLocalValue OBJECT-TYPE
+	SYNTAX          DisplayString
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The local value of the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 2 }
+
+eSIXikeTunLocalAddr OBJECT-TYPE
+	SYNTAX          IpAddress
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The local IP address of the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 3 }
+
+eSIXikeTunLocalName OBJECT-TYPE
+	SYNTAX          DisplayString
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The local name of the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 4 }
+
+eSIXikeTunRemoteValue OBJECT-TYPE
+	SYNTAX          DisplayString
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The remote value of the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 5 }
+
+eSIXikeTunRemoteAddr OBJECT-TYPE
+	SYNTAX          IpAddress
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The remote IP address of the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 6 }
+
+eSIXikeTunRemoteName OBJECT-TYPE
+	SYNTAX          DisplayString
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The remote name of the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 7 }
+
+eSIXikeTunEncryptAlgo OBJECT-TYPE
+	SYNTAX          DisplayString
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The encryption algorithm used in the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 8 }
+
+eSIXikeTunHashAlgo OBJECT-TYPE
+	SYNTAX          DisplayString
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The hash algorithm used in the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 9 }
+
+eSIXikeTunAuthMethod OBJECT-TYPE
+	SYNTAX          IkeAuthMethod
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The authentication method used in the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 10 }
+
+eSIXikeTunLifeTime OBJECT-TYPE
+	SYNTAX          Integer32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The lifetime of the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 11 }
+
+
+eSIXikeTunActiveTime OBJECT-TYPE
+	SYNTAX          TimeInterval
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The time the IPsec Phase-1 IKE Tunnel has been active."
+	::= { eSIXikeTunnelEntry 12 }
+
+eSIXikeTunInOctets OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The number of octets received by the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 13 }
+
+eSIXikeTunInPkts OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The number of packets received by the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 14 }
+
+eSIXikeTunInDropPkts OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The number of packets dropped by the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 15 }
+
+eSIXikeTunOutOctets OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The number of octets sent by the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 16 }
+
+eSIXikeTunOutPkts OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The number of packets sent by the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 17 }
+
+eSIXikeTunInOctes	OBJECT-TYPE
+	SYNTAX		Counter32
+	MAX-ACCESS	not-accessible
+	STATUS		current
+	DESCRIPTION
+		"The number of octets received by the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 18 }
+
+eSIXikeTunInPkts	OBJECT-TYPE
+	SYNTAX		Counter32
+	MAX-ACCESS	not-accessible
+	STATUS		current
+	DESCRIPTION
+		"The number of packets received by the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 19 }
+	
+
+eSIXikeTunStatus OBJECT-TYPE
+	SYNTAX          DisplayString
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The status of the IPsec Phase-1 IKE Tunnel."
+	::= { eSIXikeTunnelEntry 20 }
+
+
+eSIXipSecTunnelEntry OBJECT-TYPE
+    SYNTAX          eSIXipSecTunnelEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry contains the attributes
+        associated with an active IPsec Phase-2 Tunnel."
+    INDEX           { eSIXipSecTunIndex } 
+    ::= { eSIXipSecTunnelTable 2 }
+
+EncapMode ::= TEXTUAL-CONVENTION
+    STATUS          current
+    DESCRIPTION
+        "The encapsulation mode used by an IPsec Phase-2
+        Tunnel."
+    SYNTAX          INTEGER  {
+                        tunnel(1),
+                        transport(2)
+                    }
+
+KeyType ::= TEXTUAL-CONVENTION
+    STATUS          current
+    DESCRIPTION
+        "The type of key used by an IPsec Phase-2 Tunnel."
+    SYNTAX          INTEGER  {
+                        ike(1),
+                        manual(2)
+                    }
+
+
+eSIXipSecTunnelEntry ::= SEQUENCE {
+        eSIXipSecTunIndex               Integer32,
+        eSIXipSecTunIkeTunnelIndex      Integer32,
+        eSIXipSecTunIkeTunnelAlive      TruthValue,
+        eSIXipSecTunLocalAddr           IpAddress,
+        eSIXipSecTunRemoteAddr          IpAddress,
+        eSIXipSecTunKeyType             KeyType,
+        eSIXipSecTunEncapMode           EncapMode,
+    -- eSIXipSecTunLifeSize            Integer32,
+        eSIXipSecTunLifeTime            Integer32,
+        eSIXipSecTunActiveTime          TimeInterval,
+      --  eSIXipSecTunSaLifeSizeThreshold Integer32,
+    --  eSIXipSecTunSaLifeTimeThreshold Integer32,
+        eSIXipSecTunTotalRefreshes      Counter32,
+      --  eSIXipSecTunExpiredSaInstances  Counter32,
+     --   eSIXipSecTunCurrentSaInstances  Gauge32,
+        eSIXipSecTunInOctets            Counter32,
+      --  eSIXipSecTunHcInOctets          Counter64,
+     --   eSIXipSecTunInOctWraps          Counter32,
+     --   eSIXipSecTunInDecompOctets      Counter32,
+     --   eSIXipSecTunHcInDecompOctets    Counter64,
+     --   eSIXipSecTunInDecompOctWraps    Counter32,
+        eSIXipSecTunInPkts              Counter32,
+     --   eSIXipSecTunInDropPkts          Counter32,
+    --    eSIXipSecTunInReplayDropPkts    Counter32,
+     --   eSIXipSecTunInAuths             Counter32,
+    --    eSIXipSecTunInAuthFails         Counter32,
+    --    eSIXipSecTunInDecrypts          Counter32,
+     --   eSIXipSecTunInDecryptFails      Counter32,
+        eSIXipSecTunOutOctets           Counter32,
+   --     eSIXipSecTunHcOutOctets         Counter64,
+    --    eSIXipSecTunOutOctWraps         Counter32,
+     --   eSIXipSecTunOutUncompOctets     Counter32,
+     --   eSIXipSecTunHcOutUncompOctets   Counter64,
+     --   eSIXipSecTunOutUncompOctWraps   Counter32,
+        eSIXipSecTunOutPkts             Counter32,
+     -- eSIXipSecTunOutDropPkts         Counter32,
+      --   eSIXipSecTunOutAuths            Counter32,
+      --  eSIXipSecTunOutAuthFails        Counter32,
+      --  eSIXipSecTunOutEncrypts         Counter32,
+      --  eSIXipSecTunOutEncryptFails     Counter32,
+        eSIXipSecTunStatus              DisplayString
+}
+
+eSIXipSecTunIndex OBJECT-TYPE
+	SYNTAX          Integer32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The index of the IPsec Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 1 }
+
+eSIXipSecTunIkeTunnelIndex OBJECT-TYPE
+	SYNTAX          Integer32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The index of the IPsec Phase-1 IKE Tunnel
+		associated with the IPsec Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 2 }
+
+
+eSIXipSecTunIkeTunnelAlive OBJECT-TYPE
+	SYNTAX          TruthValue
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The status of the IPsec Phase-1 IKE Tunnel
+		associated with the IPsec Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 3 }
+
+eSIXipSecTunLocalAddr OBJECT-TYPE
+	SYNTAX          IpAddress
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The local IP address of the IPsec Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 4 }
+
+eSIXipSecTunRemoteAddr OBJECT-TYPE
+	SYNTAX          IpAddress
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The remote IP address of the IPsec Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 5 }
+
+eSIXipSecTunKeyType OBJECT-TYPE
+	SYNTAX          KeyType
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The type of key used by the IPsec Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 6 }
+
+eSIXipSecTunEncapMode OBJECT-TYPE
+	SYNTAX          EncapMode
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The encapsulation mode used by the IPsec Phase-2
+		Tunnel."
+	::= { eSIXipSecTunnelEntry 7 }
+
+eSIXipSecTunLifeTime OBJECT-TYPE
+	SYNTAX          Integer32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The lifetime of the IPsec Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 8 }
+
+eSIXipSecTunActiveTime OBJECT-TYPE
+	SYNTAX          TimeInterval
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The time since the IPsec Phase-2 Tunnel was last
+		used."
+	::= { eSIXipSecTunnelEntry 9 }
+
+eSIXipSecTunTotalRefreshes OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The total number of times the IPsec Phase-2 Tunnel
+		has been refreshed."
+	::= { eSIXipSecTunnelEntry 10 }
+
+eSIXipSecTunInOctets OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The total number of octets received by the IPsec
+		Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 11 }
+
+eSIXipSecTunInPkts OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The total number of packets received by the IPsec
+		Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 12 }
+
+eSIXipSecTunOutOctets OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The total number of octets transmitted by the IPsec
+		Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 13 }
+
+eSIXipSecTunOutPkts OBJECT-TYPE
+	SYNTAX          Counter32
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The total number of packets transmitted by the IPsec
+		Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 14 }
+
+eSIXipSecTunStatus OBJECT-TYPE
+	SYNTAX          DisplayString
+	MAX-ACCESS      not-accessible
+	STATUS          current
+	DESCRIPTION
+		"The status of the IPsec Phase-2 Tunnel."
+	::= { eSIXipSecTunnelEntry 15 }
